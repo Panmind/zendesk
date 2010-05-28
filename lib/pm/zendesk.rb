@@ -6,6 +6,7 @@ module PM
     Hostname   = 'panmind.zendesk.com'.freeze
     RemoteAuth = "http://#{Hostname}/access/remote/".freeze
     NormalAuth = "http://#{Hostname}/access/normal/".freeze
+    ZendeskURL = "http://#{Hostname}/login".freeze
 
     module Helpers
       def zendesk_tags
@@ -28,40 +29,36 @@ module PM
     end
 
     module Controller
-      def self.included(base)
-        base.before_filter :validate_zendesk_redirect, :only => [:zendesk_login, :zendesk_logout]
-      end
-
       def zendesk_login
-        now   = Time.now.to_i.to_s.force_utf8
+        redirect_to NormalAuth and return unless current_user
+
+        now   = params[:timestamp] || Time.now.to_i.to_s
         name  = current_user.name.force_utf8
         email = current_user.email.force_utf8
         hash  = Digest::MD5.hexdigest(name + email + Token + now)
-        back  = params[:return_to]
+        back  = params[:return_to] || ZendeskURL
 
-        params =
+        auth_params = [
           '?name='      + CGI.escape(name),
           '&email='     + CGI.escape(email),
           '&timestamp=' + now,
           '&hash='      + hash,
           '&return_to=' + back
+        ].join.force_utf8
 
-        redirect_to(RemoteAuth + params)
+        redirect_to(RemoteAuth + auth_params)
       end
 
       def zendesk_logout
+        flash[:notice] = "Thanks for visiting our support forum."
+        redirect_to root_url
       end
-
-      private
-        def validate_zendesk_redirect
-          redirect_to NormalAuth unless current_user
-        end
     end
 
     module Routes
-      def zendesk(options)
-        self.zendesk_login  '/zendesk/login',  :controller => options[:controller], :action => :zendesk_login
-        self.zendesk_logout '/zendesk/logout', :controller => options[:controller], :action => :zendesk_logout
+      def zendesk(base, options)
+        self.support base,           :controller => options[:controller], :action => :zendesk_login
+        self.connect "#{base}/exit", :controller => options[:controller], :action => :zendesk_logout
       end
     end
 
