@@ -18,7 +18,7 @@ module PM
             tab_color: 'black',
             title:     'Panmind',
             text:      "How may we help you? Please fill in details below, and we'll get back to you as soon as possible.",
-            tag:       'dropbox',
+            tag:       'feedback',
             url:       'panmind.zendesk.com',
             email:     '#{current_user.email rescue nil}'
           };
