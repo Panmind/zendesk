@@ -1,4 +1,5 @@
 require 'digest/md5'
+require 'pm/string_force_utf8_patch' # TODO rework
 
 module PM
   # Zendesk remote authentication helper for Rails. Implements JS generation,
@@ -12,11 +13,13 @@ module PM
   #   - vjt  Fri May 28 14:45:27 CEST 2010
   #
   module Zendesk
-    Token      = 'The-Zendesk-Auth-Token-Scrubbed-For-This-Release'.force_utf8.freeze
-    Hostname   = 'panmind.zendesk.com'.freeze
-    AuthURL    = "http://#{Hostname}/access/remote/".freeze
-    ReturnURL  = "http://#{Hostname}/login".freeze
-    SupportURL = "http://#{Hostname}/home".freeze
+    unless defined?(Token)
+      Token      = 'The-Zendesk-Auth-Token-Scrubbed-For-This-Release'.force_utf8.freeze
+      Hostname   = 'panmind.zendesk.com'.freeze
+      AuthURL    = "http://#{Hostname}/access/remote/".freeze
+      ReturnURL  = "http://#{Hostname}/login".freeze
+      SupportURL = "http://#{Hostname}/home".freeze
+    end
 
     module Helpers
       def zendesk_tags
