@@ -1,12 +1,22 @@
 require 'digest/md5'
 
 module PM
+  # Zendesk remote authentication helper for Rails. Implements JS generation,
+  # controller actions and route helpers. Have a look at the code, because it
+  # is more explanatory than a thousand words :-)
+  #
+  # Kudos to the Zendesk staff for such a simple and effective interface.
+  #
+  # (C) 2010 Mind2Mind.is, spinned off from http://panmind.org/ - MIT License.
+  #
+  #   - vjt  Fri May 28 14:45:27 CEST 2010
+  #
   module Zendesk
     Token      = 'The-Zendesk-Auth-Token-Scrubbed-For-This-Release'.force_utf8.freeze
     Hostname   = 'panmind.zendesk.com'.freeze
-    RemoteAuth = "http://#{Hostname}/access/remote/".freeze
-    NormalAuth = "http://#{Hostname}/access/normal/".freeze
-    ZendeskURL = "http://#{Hostname}/login".freeze
+    AuthURL    = "http://#{Hostname}/access/remote/".freeze
+    ReturnURL  = "http://#{Hostname}/login".freeze
+    SupportURL = "http://#{Hostname}/home".freeze
 
     module Helpers
       def zendesk_tags
@@ -26,17 +36,24 @@ module PM
         <style type='text/css'>@import url('//assets0.zendesk.com/external/zenbox/overlay.css');</style>
         <script type='text/javascript' src='//assets0.zendesk.com/external/zenbox/overlay.js'></script>)
       end
+
+      def zendesk_link_to(text, options = {})
+        return unless PM::Zendesk.enabled?
+        link_to text, support_path, options
+      end
     end
 
     module Controller
-      def zendesk_login
-        redirect_to NormalAuth and return unless current_user
+      def self.included(base)
+        base.before_filter :zendesk_handle_guests, :only => :zendesk_login
+      end
 
+      def zendesk_login
         now   = params[:timestamp] || Time.now.to_i.to_s
         name  = current_user.name.force_utf8
         email = current_user.email.force_utf8
         hash  = Digest::MD5.hexdigest(name + email + Token + now)
-        back  = params[:return_to] || ZendeskURL
+        back  = params[:return_to] || ReturnURL
 
         auth_params = [
           '?name='      + CGI.escape(name),
@@ -46,13 +63,30 @@ module PM
           '&return_to=' + back
         ].join.force_utf8
 
-        redirect_to(RemoteAuth + auth_params)
+        redirect_to(AuthURL + auth_params)
       end
 
       def zendesk_logout
         flash[:notice] = "Thanks for visiting our support forum."
         redirect_to root_url
       end
+
+      private
+        def zendesk_handle_guests
+          return if current_user
+
+          if params[:timestamp] && params[:return_to]
+            # User clicked on Zendesk "login", thus redirect to our
+            # login page, that'll redirect him/her back to Zendesk.
+            #
+            redirect_to login_path, :return_to => support_path
+          else
+            # User clicked on our "support" link, and maybe doesn't
+            # have an account yet: redirect him/her to the support.
+            #
+            redirect_to SupportURL
+          end
+        end
     end
 
     module Routes
