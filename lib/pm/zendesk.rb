@@ -91,6 +91,8 @@ module PM
 
     module Routes
       def zendesk(base, options)
+        return unless PM::Zendesk.enabled?
+
         self.support base,           :controller => options[:controller], :action => :zendesk_login
         self.connect "#{base}/exit", :controller => options[:controller], :action => :zendesk_logout
       end
