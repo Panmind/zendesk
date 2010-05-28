@@ -10,7 +10,7 @@ module PM
 
     module Helpers
       def zendesk_tags
-        #return unless Rails.env.production?
+        return unless PM::Zendesk.enabled?
 
         %(<script type="text/javascript">
           var zenbox_params = {
@@ -19,7 +19,7 @@ module PM
             title:     'Panmind',
             text:      "How may we help you? Please fill in details below, and we'll get back to you as soon as possible.",
             tag:       'feedback',
-            url:       'panmind.zendesk.com',
+            url:       '#{Hostname}',
             email:     '#{current_user.email rescue nil}'
           };
         </script>
@@ -60,6 +60,10 @@ module PM
         self.support base,           :controller => options[:controller], :action => :zendesk_login
         self.connect "#{base}/exit", :controller => options[:controller], :action => :zendesk_logout
       end
+    end
+
+    def self.enabled?
+      Rails.env.production?
     end
 
   end
