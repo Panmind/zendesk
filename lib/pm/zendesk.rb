@@ -79,7 +79,7 @@ module PM
             # User clicked on Zendesk "login", thus redirect to our
             # login page, that'll redirect him/her back to Zendesk.
             #
-            redirect_to login_path, :return_to => support_path
+            redirect_to ssl_login_url(:return_to => support_url)
           else
             # User clicked on our "support" link, and maybe doesn't
             # have an account yet: redirect him/her to the support.
