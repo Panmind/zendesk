@@ -22,7 +22,7 @@ module PM
     end
 
     module Helpers
-      def zendesk_tags
+      def zendesk_dropbox_tags
         return unless PM::Zendesk.enabled?
 
         %(<script type="text/javascript">
