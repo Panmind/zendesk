@@ -46,7 +46,7 @@ module PM
       end
 
       def zendesk_dropbox_link_to(text)
-        link_to text, '#', :onclick => 'Zenbox.render ()'
+        link_to text, '#', :onclick => 'Zenbox.render (); return false'
       end
     end
 
