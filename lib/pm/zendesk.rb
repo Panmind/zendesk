@@ -35,9 +35,9 @@ module PM
             url:       '#{Hostname}',
             email:     '#{current_user.email rescue nil}'
           };
-        </script>
-        <style type='text/css'>@import url('//assets0.zendesk.com/external/zenbox/overlay.css');</style>
-        <script type='text/javascript' src='//assets0.zendesk.com/external/zenbox/overlay.js'></script>)
+        </script><!-- Hi Zendesk team, we're caching these assets because from Europe loading is too slow. Contact us :] -->
+        <style type='text/css'>@import url('/vendor/overlay.css');</style>
+        <script type='text/javascript' src='/vendor/overlay.js'></script>)
       end
 
       def zendesk_link_to(text, options = {})
