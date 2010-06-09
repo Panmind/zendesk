@@ -37,7 +37,7 @@ module PM
           };
         </script><!-- Hi Zendesk team, we're caching these assets because from Europe loading is too slow. Contact us :] -->
         <style type='text/css'>@import url('/vendor/overlay.css');</style>
-        <script type='text/javascript' src='/vendor/overlay.js'></script>)
+        <script type='text/javascript' src='/vendor/overlay.js'></script>).html_safe
       end
 
       def zendesk_link_to(text, options = {})
