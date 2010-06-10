@@ -23,7 +23,7 @@ module PM
 
     module Helpers
       def zendesk_dropbox_config
-        return unless PM::Zendesk.enabled?
+        #return unless PM::Zendesk.enabled?
 
         %(<!-- Hi Zendesk team, we've included your JS in our cached and minified blobs to reduce load times:
                JavaScript is vital for this application :]. Contact us if you have questions. -->
