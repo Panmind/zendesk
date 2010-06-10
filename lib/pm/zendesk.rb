@@ -22,10 +22,12 @@ module PM
     end
 
     module Helpers
-      def zendesk_dropbox_tags
+      def zendesk_dropbox_config
         return unless PM::Zendesk.enabled?
 
-        %(<script type="text/javascript">
+        %(<!-- Hi Zendesk team, we've included your JS in our cached and minified blobs to reduce load times:
+               JavaScript is vital for this application :]. Contact us if you have questions. -->
+        <script type="text/javascript">
           var zenbox_params = {
             tab_id:    'feedback',
             tab_color: 'black',
@@ -35,7 +37,14 @@ module PM
             url:       '#{Hostname}',
             email:     '#{current_user.email rescue nil}'
           };
-        </script><!-- Hi Zendesk team, we're caching these assets because from Europe loading is too slow. Contact us :] -->
+        </script>).html_safe
+      end
+
+      def zendesk_dropbox_tags
+        return unless PM::Zendesk.enabled?
+
+        %(#{zendesk_dropbox_config}
+        <!-- Hi Zendesk team, we're caching these assets because from Europe loading is too slow. Contact us :] -->
         <style type='text/css'>@import url('/vendor/overlay.css');</style>
         <script type='text/javascript' src='/vendor/overlay.js'></script>).html_safe
       end
