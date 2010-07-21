@@ -22,6 +22,8 @@ module PM
       def return_url;  @return_url  ||= "http://#{hostname}/login".freeze          end
       def support_url; @support_url ||= "http://#{hostname}/home".freeze           end
 
+      attr_accessor :dropbox
+
       def set(options)
         self.token    = options[:token]
         self.hostname = options[:hostname]
@@ -29,6 +31,14 @@ module PM
         if self.token.blank? || self.hostname.blank?
           raise ConfigurationError, "Zendesk requires both a token and an hostname"
         end
+
+        self.dropbox = (options[:dropbox] || {}).reverse_merge(
+          :tab_id    => 'feedback',
+          :tab_color => 'black',
+          :title     => 'Support',
+          :text      => "How may we help you? Please fill in details below, and we'll get back to you as soon as possible.",
+          :url       => Zendesk.hostname
+        ).freeze
       end
 
       def enabled?
@@ -42,21 +52,12 @@ module PM
 
     module Helpers
       def zendesk_dropbox_config
-        #return unless Zendesk.enabled?
+        config = Zendesk.dropbox
+        if config[:email].kind_of?(Proc)
+          config = config.merge(:email => instance_exec(&config[:email]))
+        end
 
-        %(<!-- Hi Zendesk team, we've included your JS in our cached and minified blobs to reduce load times:
-               JavaScript is vital for this application :]. Contact us if you have questions. -->
-        <script type="text/javascript">
-          var zenbox_params = {
-            tab_id:    'feedback',
-            tab_color: 'black',
-            title:     'Panmind',
-            text:      "How may we help you? Please fill in details below, and we'll get back to you as soon as possible.",
-            tag:       'feedback',
-            url:       '#{Zendesk.hostname}',
-            email:     '#{current_user.email rescue nil}'
-          };
-        </script>).html_safe
+        javascript_tag("var zenbox_params = #{config.to_json};").html_safe
       end
 
       def zendesk_dropbox_tags
