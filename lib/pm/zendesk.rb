@@ -139,4 +139,5 @@ module PM
   end
 end
 
-ActionController::Routing::RouteSet::Mapper.send :include, PM::Zendesk::Routes
+ActionView::Base.instance_eval { include PM::Zendesk::Helpers }
+ActionController::Routing::RouteSet::Mapper.instance_eval { include PM::Zendesk::Routes }
