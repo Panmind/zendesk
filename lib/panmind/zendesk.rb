@@ -51,8 +51,8 @@ module Panmind
       end
 
       private
-        def token=(token);       @token    = token.force_utf8.freeze end
-        def hostname=(hostname); @hostname = hostname.freeze         end
+        def token=(token);       @token    = token.force_utf8.freeze rescue nil end
+        def hostname=(hostname); @hostname = hostname.freeze                    end
     end
 
     module Helpers
