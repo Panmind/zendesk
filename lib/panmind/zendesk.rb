@@ -21,13 +21,16 @@ module Panmind
       def return_url;  @return_url  ||= "http://#{hostname}/login".freeze          end
       def support_url; @support_url ||= "http://#{hostname}/home".freeze           end
 
-      attr_accessor :dropbox, :login, :assets_path, :assets_name
+      # TODO these should become attr_readers and we set @variables directly
+      attr_accessor :dropbox, :login, :login_url, :assets_path, :assets_name
 
       def set(options)
-        self.token, self.hostname, self.login = options.values_at(:token, :hostname, :login)
+        self.token, self.hostname, self.login, self.login_url =
+          options.values_at(:token, :hostname, :login, :login_url)
 
-        if self.token.blank? || self.hostname.blank? || self.login.blank?
-          raise ConfigurationError, "Zendesk requires the API token, an hostname and a proc to infer the user name and e-mail"
+        if %w( token hostname login login_url ).any? {|conf| send(conf).blank?}
+          raise ConfigurationError, "Zendesk requires the API token, an hostname a proc to infer the user name "\
+                                    "and e-mail and the login route helper name" # TODO don't require all these things
         end
 
         self.dropbox = (options[:dropbox] || {}).reverse_merge(
@@ -116,7 +119,7 @@ module Panmind
             # User clicked on Zendesk "login", thus redirect to our
             # login page, that'll redirect him/her back to Zendesk.
             #
-            redirect_to ssl_login_url(:return_to => support_url)
+            redirect_to send(Zendesk.login_url, :return_to => support_url)
           else
             # User clicked on our "support" link, and maybe doesn't
             # have an account yet: redirect him/her to the support.
