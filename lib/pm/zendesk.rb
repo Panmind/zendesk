@@ -22,14 +22,13 @@ module PM
       def return_url;  @return_url  ||= "http://#{hostname}/login".freeze          end
       def support_url; @support_url ||= "http://#{hostname}/home".freeze           end
 
-      attr_accessor :dropbox
+      attr_accessor :dropbox, :login
 
       def set(options)
-        self.token    = options[:token]
-        self.hostname = options[:hostname]
+        self.token, self.hostname, self.login = options.values_at(:token, :hostname, :login)
 
-        if self.token.blank? || self.hostname.blank?
-          raise ConfigurationError, "Zendesk requires both a token and an hostname"
+        if self.token.blank? || self.hostname.blank? || self.login.blank?
+          raise ConfigurationError, "Zendesk requires the API token, an hostname and a proc to infer the user name and e-mail"
         end
 
         self.dropbox = (options[:dropbox] || {}).reverse_merge(
@@ -85,11 +84,11 @@ module PM
       end
 
       def zendesk_login
-        now   = params[:timestamp] || Time.now.to_i.to_s
-        name  = current_user.name.force_utf8
-        email = current_user.email.force_utf8
-        hash  = Digest::MD5.hexdigest(name + email + Zendesk.token + now)
-        back  = params[:return_to] || Zendesk.return_url
+        name, email = instance_exec(&Zendesk.login).map!(&:force_utf8)
+
+        now  = params[:timestamp] || Time.now.to_i.to_s
+        hash = Digest::MD5.hexdigest(name + email + Zendesk.token + now)
+        back = params[:return_to] || Zendesk.return_url
 
         auth_params = [
           '?name='      + CGI.escape(name),
@@ -109,7 +108,7 @@ module PM
 
       private
         def zendesk_handle_guests
-          return if current_user
+          return if logged_in? rescue false # TODO add another option
 
           if params[:timestamp] && params[:return_to]
             # User clicked on Zendesk "login", thus redirect to our
