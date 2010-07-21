@@ -1,16 +1,15 @@
-# Adds a .force_utf8 to the String class if running on 1.9,
-# that forces the encoding to utf-8 and then normalizes in
-# NFKC form.
+# Adds a .force_utf8 to the String class: it forces the instance
+# encoding to utf-8 and then normalizes in NFKC form.
 #
-# For now, we're using ActiveSupport because it is 33% faster
-# than UnicodeUtils, but in the future you can never know.
+# For now, we're using ActiveSupport because it has proven to be
+# 33% faster than UnicodeUtils.. but in the future you can never
+# know whether the AS::Multibyte::Chars class will be supported.
 #
-# See http://www.cl.cam.ac.uk/~mgk25/unicode.html#ucsutf for
-# details about on Unicode Normalization Forms.
+# Please read http://www.cl.cam.ac.uk/~mgk25/unicode.html#ucsutf
+# for more information about Unicode Normalization Forms.
 #
-# Returns ActiveSupport's mb_chars on Ruby 1.8.
+#   - vjt  Wed Jul 21 16:51:25 CEST 2010
 #
-
 unless 'the string'.respond_to?(:force_utf8)
   class String
     if '1.9'.respond_to?(:force_encoding)
@@ -23,7 +22,7 @@ unless 'the string'.respond_to?(:force_utf8)
       end
     else
       def force_utf8
-        mb_chars.normalize(:kc)
+        replace mb_chars.normalize(:kc)
       end
     end
   end
