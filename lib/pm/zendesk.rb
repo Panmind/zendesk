@@ -31,6 +31,10 @@ module PM
         end
       end
 
+      def enabled?
+        Rails.env.production?
+      end
+
       private
         def token=(token);       @token    = token.force_utf8.freeze end
         def hostname=(hostname); @hostname = hostname.freeze         end
@@ -38,7 +42,7 @@ module PM
 
     module Helpers
       def zendesk_dropbox_config
-        #return unless PM::Zendesk.enabled?
+        #return unless Zendesk.enabled?
 
         %(<!-- Hi Zendesk team, we've included your JS in our cached and minified blobs to reduce load times:
                JavaScript is vital for this application :]. Contact us if you have questions. -->
@@ -56,7 +60,7 @@ module PM
       end
 
       def zendesk_dropbox_tags
-        return unless PM::Zendesk.enabled?
+        return unless Zendesk.enabled?
 
         %(#{zendesk_dropbox_config}
         <!-- Hi Zendesk team, we're caching these assets because from Europe loading is too slow. Contact us :] -->
@@ -65,7 +69,7 @@ module PM
       end
 
       def zendesk_link_to(text, options = {})
-        return unless PM::Zendesk.enabled?
+        return unless Zendesk.enabled?
         link_to text, support_path, options
       end
 
@@ -122,15 +126,11 @@ module PM
 
     module Routes
       def zendesk(base, options)
-        return unless PM::Zendesk.enabled?
+        return unless Zendesk.enabled?
 
         self.support base,           :controller => options[:controller], :action => :zendesk_login
         self.connect "#{base}/exit", :controller => options[:controller], :action => :zendesk_logout
       end
-    end
-
-    def self.enabled?
-      Rails.env.production?
     end
 
   end
