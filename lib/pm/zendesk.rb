@@ -8,9 +8,9 @@ module PM
   #
   # Kudos to the Zendesk staff for such a simple and effective interface.
   #
-  # (C) 2010 Mind2Mind.is, spinned off from http://panmind.org/ - MIT License.
+  # (C) 2010 Panmind, Released under the terms of the Ruby License.
   #
-  #   - vjt  Fri May 28 14:45:27 CEST 2010
+  #   - vjt  Wed Jul 21 13:00:42 CEST 2010
   #
   module Zendesk
     class ConfigurationError < StandardError; end
