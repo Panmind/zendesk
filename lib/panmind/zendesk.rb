@@ -1,7 +1,6 @@
 require 'digest/md5'
-require 'pm/string_force_utf8_patch' # TODO rework
 
-module PM
+module Panmind
   # Zendesk remote authentication helper for Rails. Implements JS generation,
   # controller actions and route helpers. Have a look at the code, because it
   # is more explanatory than a thousand words :-)
@@ -138,6 +137,3 @@ module PM
 
   end
 end
-
-ActionView::Base.instance_eval { include PM::Zendesk::Helpers }
-ActionController::Routing::RouteSet::Mapper.instance_eval { include PM::Zendesk::Routes }
