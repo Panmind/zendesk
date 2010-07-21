@@ -22,7 +22,7 @@ module PM
       def return_url;  @return_url  ||= "http://#{hostname}/login".freeze          end
       def support_url; @support_url ||= "http://#{hostname}/home".freeze           end
 
-      attr_accessor :dropbox, :login
+      attr_accessor :dropbox, :login, :assets_path, :assets_name
 
       def set(options)
         self.token, self.hostname, self.login = options.values_at(:token, :hostname, :login)
@@ -38,6 +38,10 @@ module PM
           :text      => "How may we help you? Please fill in details below, and we'll get back to you as soon as possible.",
           :url       => Zendesk.hostname
         ).freeze
+
+        # TODO better configuration
+        self.assets_path = options[:assets_path] || '//assets0.zendesk.com/external/zenbox'
+        self.assets_name = options[:assets_name] || 'overlay'
       end
 
       def enabled?
@@ -63,9 +67,8 @@ module PM
         return unless Zendesk.enabled?
 
         %(#{zendesk_dropbox_config}
-        <!-- Hi Zendesk team, we're caching these assets because from Europe loading is too slow. Contact us :] -->
-        <style type='text/css'>@import url('/vendor/overlay.css');</style>
-        <script type='text/javascript' src='/vendor/overlay.js'></script>).html_safe
+        <style type='text/css'>@import url('#{Zendesk.assets_path}/#{Zendesk.assets_name}.css');</style>
+        <script type='text/javascript' src='#{Zendesk.assets_path}/#{Zendesk.assets_name}.js'></script>).html_safe
       end
 
       def zendesk_link_to(text, options = {})
