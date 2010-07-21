@@ -51,16 +51,13 @@ Finally, in your config/environment.rb:
 
 The required options are:
 
- * `:token`     - your zendesk [shared secret](http://www.zendesk.com/api/remote-authentication)
- * `:hostname`  - your zendesk account host name
- * `:login`     - a `Proc` object evaluated in the controller instance context,
-                  that must return an `Array` whose first element is the current
-                  user name and the second its email. This `Proc` is evaluated
-                  iff the `logged_in?` instance method of your controller returns
-                  true. Configuration of the method name will follow.
- * `:login_url` - The name of the named route helper that generates the full URL
-                  of your user login page. We use `:ssl_login_url` thanks to our
-                  [SSL Helper](http://github.com/Panmind/ssl_helper) plugin.
+ * `:token` -- your zendesk [shared secret](http://www.zendesk.com/api/remote-authentication)
+ * `:hostname` -- your zendesk account host name
+ * `:login` -- a `Proc` object evaluated in the controller instance context,
+   that must return an `Array` whose first element is the current user name and the second its email.
+   This `Proc` is evaluated iff the `logged_in?` instance method of your controller returns true.
+ * `:login_url` -- The name of the named route helper that generates the full URL of your login page.
+   We use `:ssl_login_url` thanks to our [SSL Helper](http://github.com/Panmind/ssl_helper) plugin.
 
 The `:dropbox` option is for the [Zendesk dropbox](http://www.zendesk.com/blog/instant-support-access-with-drop-box)
 configuration, it should be an hash with symbolized keys and it is converted to
