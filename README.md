@@ -95,15 +95,38 @@ The second parameter of said helper is passed to Rails' `link_to`
 one to customize the link tag attributes.
 
 
+Caching
+-------
+
+If you implement asset minifization and concatenation, you'll surely
+want to reduce HTTP requests to external services. While it's not the
+best practice in the world to cache said services assets, to speed up
+your application you may be forced to do it.
+
+We're doing it on [Panmind](http://panmind.org) - both to reduce the
+number of HTTP requests and because the lag with `assets0.zendesk.com`
+from Europe is quite high.
+
+To make a long story short, if you're including the Zendesk assets in
+your minified blobs, you can use just the `zendesk_dropbox_config` view
+helper to generate the dropbox configuration, placing it before the
+inclusion of your JS blobs: this way the `zenbox_params` variable will
+be already defined when the JS is evaluated.
+
+If you're wondering how we're minifying and concatenating our JS and CSS
+assets, follow us on GitHub: we plan to release that code as well. :-)
+
+
 To-do
 -----
 
- * Clean up configuration by requiring less information: *convention over configuration*!
- * Configuration of the `logged_in?` method name: not everyone still uses RESTful authentication nowadays
- * Removal of the `String#force_utf8` patch and its usage in the plugin
- * Code documentation
+ * Clean up configuration by requiring less variables: *convention over configuration*!
+ * Configuration of the `logged_in?` method name
+ * Remove the `String#force_utf8` patch and its usage
  * Allow options passing to the `zendesk_dropbox_link_to` helper
- * Tests
+ * Code documentation
+ * Gem
+ * Tests (yuck!)
 
 Please fork the project and send us a pull request if you check off any of these items
 from the to-do list, or for any other improvement. Thanks! :-)
