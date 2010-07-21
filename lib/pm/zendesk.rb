@@ -13,12 +13,27 @@ module PM
   #   - vjt  Fri May 28 14:45:27 CEST 2010
   #
   module Zendesk
-    unless defined?(Token)
-      Token      = 'The-Zendesk-Auth-Token-Scrubbed-For-This-Release'.force_utf8.freeze
-      Hostname   = 'panmind.zendesk.com'.freeze
-      AuthURL    = "http://#{Hostname}/access/remote/".freeze
-      ReturnURL  = "http://#{Hostname}/login".freeze
-      SupportURL = "http://#{Hostname}/home".freeze
+    class ConfigurationError < StandardError; end
+
+    class << self
+      attr_reader :token, :hostname
+
+      def auth_url;    @auth_url    ||= "http://#{hostname}/access/remote/".freeze end
+      def return_url;  @return_url  ||= "http://#{hostname}/login".freeze          end
+      def support_url; @support_url ||= "http://#{hostname}/home".freeze           end
+
+      def set(options)
+        self.token    = options[:token]
+        self.hostname = options[:hostname]
+
+        if self.token.blank? || self.hostname.blank?
+          raise ConfigurationError, "Zendesk requires both a token and an hostname"
+        end
+      end
+
+      private
+        def token=(token);       @token    = token.force_utf8.freeze end
+        def hostname=(hostname); @hostname = hostname.freeze         end
     end
 
     module Helpers
@@ -34,7 +49,7 @@ module PM
             title:     'Panmind',
             text:      "How may we help you? Please fill in details below, and we'll get back to you as soon as possible.",
             tag:       'feedback',
-            url:       '#{Hostname}',
+            url:       '#{Zendesk.hostname}',
             email:     '#{current_user.email rescue nil}'
           };
         </script>).html_safe
@@ -68,8 +83,8 @@ module PM
         now   = params[:timestamp] || Time.now.to_i.to_s
         name  = current_user.name.force_utf8
         email = current_user.email.force_utf8
-        hash  = Digest::MD5.hexdigest(name + email + Token + now)
-        back  = params[:return_to] || ReturnURL
+        hash  = Digest::MD5.hexdigest(name + email + Zendesk.token + now)
+        back  = params[:return_to] || Zendesk.return_url
 
         auth_params = [
           '?name='      + CGI.escape(name),
@@ -79,7 +94,7 @@ module PM
           '&return_to=' + back
         ].join.force_utf8
 
-        redirect_to(AuthURL + auth_params)
+        redirect_to(Zendesk.auth_url + auth_params)
       end
 
       def zendesk_logout
@@ -100,7 +115,7 @@ module PM
             # User clicked on our "support" link, and maybe doesn't
             # have an account yet: redirect him/her to the support.
             #
-            redirect_to SupportURL
+            redirect_to Zendesk.support_url
           end
         end
     end
