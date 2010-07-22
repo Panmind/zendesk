@@ -114,9 +114,18 @@ If you're wondering how we're minifying and concatenating our JS and CSS
 assets, follow us on GitHub: we plan to release that code as well. :-)
 
 
-To-do
------
+Compatibility
+-------------
 
+Tested with Rails 2.3.8 with the `rails_xss` plugin installed,
+running under Ruby 1.9.1-p378.
+
+
+TODO
+----
+
+ * Your login action must implement a `redirect_to params[:return_to] || some_other_url`
+   or redirects to Zendesk won't work: remove relying on this assumption. Cleanly.
  * Clean up configuration by requiring less variables: *convention over configuration*!
  * Configuration of the `logged_in?` method name
  * Remove the `String#force_utf8` patch and its usage
