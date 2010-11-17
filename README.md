@@ -13,9 +13,13 @@ and the necessary controller and routing code to implement
 Installation
 ------------
 
-    script/plugin install git://github.com/Panmind/zendesk.git
+Via RubyGems:
 
-Gems will follow soon, hopefully after the July 22nd Ruby Social Club in Milan.
+    gem install panmind-zendesk
+
+Or via Rails Plugin:
+
+    script/plugin install git://github.com/Panmind/zendesk.git
 
 
 Configuration
