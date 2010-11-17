@@ -12,6 +12,8 @@ module Panmind
   #   - vjt  Wed Jul 21 13:00:42 CEST 2010
   #
   module Zendesk
+    Version = 1.0
+
     class ConfigurationError < StandardError; end
 
     class << self
