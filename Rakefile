@@ -17,7 +17,7 @@ begin
     gemspec.email            = 'vjt@openssl.it'
     gemspec.homepage         = 'http://github.com/Panmind/zendesk'
 
-    gemspec.files            = %w( README.md Rakefile init.rb ) + Dir['lib/**/*']
+    gemspec.files            = %w( README.md Rakefile rails/init.rb ) + Dir['lib/**/*']
     gemspec.extra_rdoc_files = %w( README.md )
     gemspec.has_rdoc         = true
 
