@@ -15,8 +15,9 @@ module Panmind
 
     class Railtie
       def self.insert
+        puts "** The zendesk gem has to be updated to the new Rails Router"
         ActionView::Base.instance_eval { include Panmind::Zendesk::Helpers }
-        ActionController::Routing::RouteSet::Mapper.instance_eval { include Panmind::Zendesk::Routes }
+        ActionDispatch::Routing::DeprecatedMapper.instance_eval { include Panmind::Zendesk::Routes }
       end
     end
 
