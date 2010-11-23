@@ -1,4 +1,5 @@
 require 'digest/md5'
+require 'panmind/zendesk/railtie' if defined? Rails
 
 module Panmind
   # Zendesk remote authentication helper for Rails. Implements JS generation,
@@ -12,7 +13,7 @@ module Panmind
   #   - vjt  Wed Jul 21 13:00:42 CEST 2010
   #
   module Zendesk
-    Version = 1.0
+    Version = '1.0.1'
 
     class ConfigurationError < StandardError; end
 

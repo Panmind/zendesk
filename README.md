@@ -19,7 +19,7 @@ Via RubyGems:
 
 Or via Rails Plugin:
 
-    script/plugin install git://github.com/Panmind/zendesk.git
+    rails plugin install git://github.com/Panmind/zendesk.git
 
 
 Configuration
@@ -121,8 +121,7 @@ assets, follow us on GitHub: we plan to release that code as well. :-)
 Compatibility
 -------------
 
-Tested with Rails 2.3.8 with the `rails_xss` plugin installed,
-running under Ruby 1.9.1-p378.
+Tested with Rails 3.0.3 running under Ruby 1.9.2p0.
 
 
 TODO
