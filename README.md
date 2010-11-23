@@ -134,7 +134,6 @@ TODO
  * Configuration of the `logged_in?` method name
  * Allow options passing to the `zendesk_dropbox_link_to` helper
  * Code documentation
- * Gem
  * Tests (yuck!)
 
 Please fork the project and send us a pull request if you check off any of these items
