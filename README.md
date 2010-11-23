@@ -132,7 +132,6 @@ TODO
    or redirects to Zendesk won't work: remove relying on this assumption. Cleanly.
  * Clean up configuration by requiring less variables: *convention over configuration*!
  * Configuration of the `logged_in?` method name
- * Remove the `String#force_utf8` patch and its usage
  * Allow options passing to the `zendesk_dropbox_link_to` helper
  * Code documentation
  * Gem

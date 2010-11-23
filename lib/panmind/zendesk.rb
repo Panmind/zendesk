@@ -53,8 +53,8 @@ module Panmind
       end
 
       private
-        def token=(token);       @token    = token.force_utf8.freeze rescue nil end
-        def hostname=(hostname); @hostname = hostname.freeze                    end
+        def token=(token);       @token    = token.freeze    rescue nil end
+        def hostname=(hostname); @hostname = hostname.freeze            end
     end
 
     module Helpers
@@ -91,7 +91,7 @@ module Panmind
       end
 
       def zendesk_login
-        name, email = instance_exec(&Zendesk.login).map!(&:force_utf8)
+        name, email = instance_exec(&Zendesk.login)
 
         now  = params[:timestamp] || Time.now.to_i.to_s
         hash = Digest::MD5.hexdigest(name + email + Zendesk.token + now)
@@ -103,7 +103,7 @@ module Panmind
           '&timestamp=' + now,
           '&hash='      + hash,
           '&return_to=' + back
-        ].join.force_utf8
+        ].join
 
         redirect_to(Zendesk.auth_url + auth_params)
       end
