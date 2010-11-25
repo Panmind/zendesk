@@ -132,12 +132,14 @@ module Panmind
         end
     end
 
-    module Routes
-      def zendesk(base, options)
+    module Routing
+      def zendesk(base, options = {})
         return unless Zendesk.enabled?
 
-        self.support base,           :controller => options[:controller], :action => :zendesk_login
-        self.connect "#{base}/exit", :controller => options[:controller], :action => :zendesk_logout
+        scope base.to_s, :controller => options[:controller] do
+          get '',     :action => :zendesk_login,  :as => base.to_sym
+          get 'exit', :action => :zendesk_logout, :as => nil
+        end
       end
     end
 
