@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{panmind-zendesk}
-  s.version = "1.0.1"
+  s.version = "1.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Marcello Barnaba"]
-  s.date = %q{2010-11-23}
+  s.date = %q{2010-11-25}
   s.description = %q{The plugin implements the HTML generation code for the Zendesk dropbox and the necessary controller and routing code to implement remote authentication}
   s.email = %q{vjt@openssl.it}
   s.extra_rdoc_files = [
