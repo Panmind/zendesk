@@ -42,8 +42,6 @@ module Panmind
         # Dropbox specific customizations, defaults in place
         self.dropbox = (options[:dropbox] || {}).reverse_merge(
           :tabID       => 'feedback',
-          :tabColor    => 'black',
-          :tabPosition => 'left', 
           :url         => Zendesk.hostname
         ).freeze
 
