@@ -24,7 +24,7 @@ module Panmind
       def support_url; @support_url ||= "http://#{hostname}/home".freeze           end
 
       # TODO these should become attr_readers and we set @variables directly
-      attr_accessor :dropbox, :login, :login_url, :assets_path, :assets_name
+      attr_accessor :dropbox, :login, :login_url, :js_asset_path, :js_asset_name, :css_asset_path, :css_asset_name 
 
       def set(options)
         self.token, self.hostname, self.login, self.login_url =
@@ -35,21 +35,27 @@ module Panmind
                                     "and e-mail and the login route helper name" # TODO don't require all these things
         end
 
+        if options[:dropbox].nil? or options[:dropbox][:dropboxID].blank? 
+          raise ConfigurationError, "DropboxID is a required param in zenbox-2.0. Please configure options[:dropbox][:dropboxID]."
+        end 
+
+        # Dropbox specific customizations, defaults in place
         self.dropbox = (options[:dropbox] || {}).reverse_merge(
-          :tab_id    => 'feedback',
-          :tab_color => 'black',
-          :title     => 'Support',
-          :text      => "How may we help you? Please fill in details below, and we'll get back to you as soon as possible.",
-          :url       => Zendesk.hostname
+          :tabID       => 'feedback',
+          :tabColor    => 'black',
+          :tabPosition => 'left', 
+          :url         => Zendesk.hostname
         ).freeze
 
-        # TODO better configuration
-        self.assets_path = options[:assets_path] || '//assets0.zendesk.com/external/zenbox'
-        self.assets_name = options[:assets_name] || 'overlay'
+        # Path and name for css and asset required for zenbox 2.0
+        self.js_asset_path  = options[:js_asset_path]  || '//assets0.zendesk.com/external/zenbox'
+        self.js_asset_name  = options[:js_asset_name]  || 'zenbox-2.0'
+        self.css_asset_path = options[:css_asset_path] || '//assets0.zendesk.com/external/zenbox'
+        self.css_asset_name = options[:css_asset_name] || 'zenbox-2.0'
       end
 
       def enabled?
-        Rails.env.production?
+        Rails.env.production? || Rails.env.development? 
       end
 
       private
@@ -60,8 +66,9 @@ module Panmind
     module Helpers
       def zendesk_dropbox_config
         config = Zendesk.dropbox
-        if config[:email].kind_of?(Proc)
-          config = config.merge(:email => instance_exec(&config[:email]))
+
+        [:requester_email, :requester_name].each do |key| 
+          config = config.merge(key => instance_exec(&config[key])) if config[key].kind_of?(Proc)
         end
 
         javascript_tag("var zenbox_params = #{config.to_json};").html_safe
@@ -69,10 +76,10 @@ module Panmind
 
       def zendesk_dropbox_tags
         return unless Zendesk.enabled?
-
+        
         %(#{zendesk_dropbox_config}
-        <style type='text/css'>@import url('#{Zendesk.assets_path}/#{Zendesk.assets_name}.css');</style>
-        <script type='text/javascript' src='#{Zendesk.assets_path}/#{Zendesk.assets_name}.js'></script>).html_safe
+        <style type='text/css' media='screen,projection'>@import url('#{Zendesk.css_asset_path}/#{Zendesk.css_asset_name}.css');</style>
+        <script type='text/javascript' src='#{Zendesk.js_asset_path}/#{Zendesk.js_asset_name}.js'></script>).html_safe
       end
 
       def zendesk_link_to(text, options = {})
