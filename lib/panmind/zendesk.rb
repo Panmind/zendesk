@@ -20,7 +20,7 @@ module Panmind
     class << self
       attr_reader :token, :hostname
 
-      def auth_url;    @auth_url    ||= "http://#{hostname}/access/remote/".freeze end
+      def auth_url;    @auth_url    ||= "http://#{hostname}/access/remoteauth/".freeze end
       def return_url;  @return_url  ||= "http://#{hostname}/login".freeze          end
       def support_url; @support_url ||= "http://#{hostname}/home".freeze           end
 
@@ -100,7 +100,7 @@ module Panmind
         name, email = instance_exec(&Zendesk.login)
 
         now  = params[:timestamp] || Time.now.to_i.to_s
-        hash = Digest::MD5.hexdigest(name + email + Zendesk.token + now)
+        hash = remote_hash({:name => name, :email => email, :token => Zendesk.token, :timestamp => now})
         back = params[:return_to] || Zendesk.return_url
 
         auth_params = [
@@ -134,6 +134,20 @@ module Panmind
             #
             redirect_to Zendesk.support_url
           end
+        end
+
+        def remote_hash(args)
+          parts = []
+          parts << args[:name]
+          parts << args[:email]
+          parts << args[:external_id]
+          parts << args[:organization]
+          parts << args[:tags]
+          parts << args[:remote_photo_url]
+          parts << args[:token]
+          parts << args[:timestamp]
+          input = parts.join("|")
+          Digest::MD5.hexdigest(input)
         end
     end
 
