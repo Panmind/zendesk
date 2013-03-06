@@ -1,5 +1,5 @@
 require 'rake'
-require 'rake/rdoctask'
+require 'rdoc/task'
 
 require './lib/panmind/zendesk'
 
@@ -14,7 +14,7 @@ begin
                                'code to implement remote authentication'
 
     gemspec.authors          = ['Fabrizio Regini','Marcello Barnaba']
-    gemspec.email            = 'info@panmind.org'
+    gemspec.email            = 'info@panmind.com'
     gemspec.homepage         = 'http://github.com/Panmind/zendesk'
 
     gemspec.files            = %w( README.md Rakefile rails/init.rb ) + Dir['lib/**/*']
@@ -22,7 +22,7 @@ begin
     gemspec.has_rdoc         = true
 
     gemspec.version          = Panmind::Zendesk::Version
-    gemspec.date             = '2011-05-16'
+    gemspec.date             = '2013-03-06'
 
     gemspec.require_path     = 'lib'
 
